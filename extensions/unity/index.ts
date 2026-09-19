@@ -261,6 +261,38 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
+	// ---- unity_run ----------------------------------------------------------
+	pi.registerTool({
+		name: "unity_run",
+		label: "Unity Run (batch)",
+		description:
+			"Run a Unity project in batch mode via `unity run`. Two modes: (a) --command <name> executes a registered Pipeline command headlessly (fresh editor boot, prints result, exits; reuses a running editor if open), (b) editorArgs forwards raw args to the Unity executable (e.g. -executeMethod). Asks for confirmation before launching.",
+		parameters: Type.Object({
+			project: Type.String({ description: "Project path or name" }),
+			command: Type.Optional(
+				Type.String({ description: "Registered Pipeline command name to run headlessly" })
+			),
+			commandArgs: Type.Optional(
+				Type.Array(Type.String(), { description: "Args after -- parsed against the command's schema" })
+			),
+			editorArgs: Type.Optional(
+				Type.Array(Type.String(), { description: "Raw args forwarded to the Unity executable after -- (e.g. ['-executeMethod','Builder.Build'])" })
+			),
+			timeoutSec: Type.Optional(Type.Number({ description: "Kill editor after N seconds" })),
+		}),
+		async execute(_id, params, _signal, _onUpdate, ctx) {
+			const args = ["run", params.project];
+			if (params.command) args.push("--command", params.command);
+			if (params.timeoutSec) args.push("--timeout", String(params.timeoutSec));
+			const tail = params.command ? params.commandArgs : params.editorArgs;
+			if (tail?.length) args.push("--", ...tail);
+			const ok = await ctx.ui.confirm("Run Unity project (batch)?", `unity ${args.join(" ")}`);
+			if (!ok) return { content: [{ type: "text", text: "Cancelled by user." }], details: { cancelled: true } };
+			const res = await runUnity(args, { timeoutMs: ((params.timeoutSec ?? 1200) + 30) * 1000 });
+			return { content: [{ type: "text", text: formatResult(res, "unity run") }], details: { result: res } };
+		},
+	});
+
 	// ---- unity_build --------------------------------------------------------
 	pi.registerTool({
 		name: "unity_build",

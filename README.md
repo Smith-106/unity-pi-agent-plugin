@@ -84,6 +84,7 @@ Once installed:
   - `unity_status` — live Editor instances (port, project, version, PID, state).
   - `unity_command` — run a Pipeline command on a live Editor (`unity command <name>`); omit name to list commands.
   - `unity_eval` — eval C# in a live Editor (`unity command eval`); confirms first.
+  - `unity_run` — batch run via `unity run`: `--command <name>` runs a registered Pipeline command headlessly, or `editorArgs` forwards raw args to the Unity executable; confirms first.
   - `unity_build` — headless build via `unity build` (`--target`/`--profile`/`--execute-method`); confirms first.
   - `unity_test` — EditMode/PlayMode tests via `unity test`; confirms first.
 
