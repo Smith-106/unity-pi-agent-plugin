@@ -227,6 +227,7 @@ export default function (pi: ExtensionAPI) {
 			if (params.command) args.push(params.command);
 			if (params.args?.length) args.push(...params.args);
 			if (params.projectPath) args.push("--project-path", params.projectPath);
+			args.push("--caller", "pi", "--skill", "unity-pi");
 			const res = await runUnity(args);
 			return { content: [{ type: "text", text: formatResult(res, "unity command") }], details: { result: res } };
 		},
@@ -253,6 +254,8 @@ export default function (pi: ExtensionAPI) {
 			if (!ok) return { content: [{ type: "text", text: "Cancelled by user." }], details: { cancelled: true } };
 			const args = ["command", "eval", params.code];
 			if (params.projectPath) args.push("--project-path", params.projectPath);
+			// analytics label, same convention as the official plugin
+			args.push("--caller", "pi", "--skill", "unity-pi");
 			const res = await runUnity(args);
 			return { content: [{ type: "text", text: formatResult(res, "unity eval") }], details: { result: res } };
 		},
