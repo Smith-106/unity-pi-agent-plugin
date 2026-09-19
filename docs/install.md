@@ -3,7 +3,8 @@
 ## Prerequisites
 
 - [pi](https://github.com/earendil-works/pi-coding-agent) installed and working.
-- Unity 6 (`6000.x`) installed via Unity Hub (for the extension's editor tools).
+- The **`unity` CLI (beta)** — the extension calls this binary for all Unity operations.
+- Unity 6 (`6000.x`) installed via Unity Hub (for editor builds/tests and live control).
 - `git` to clone and update this repo.
 
 ## Get the repo
@@ -67,8 +68,9 @@ pi -e /path/to/unity-pi-agent-plugin/extensions/unity/index.ts
 |---|---|
 | Skills not listed | Path in `skills` must point at the directory that *contains* the `*/SKILL.md` folders. Use an absolute path. Restart pi after editing settings. |
 | `/unity:status` unknown | Extension dir must be `~/.pi/agent/extensions/unity/index.ts` (a directory with `index.ts`, not a loose `.ts`). Run `/reload` after adding. |
-| `unity_detect_editors` returns none | Your editors are in a custom location. Edit `editorSearchRoots()` in `extensions/unity/index.ts` to add your Hub path. |
-| `unity_run_batch` can't find the right editor | It prefers the version in `ProjectSettings/ProjectVersion.txt`; install that version via Unity Hub. |
+| `unity_status` / `unity_command` report "no instances" | Open the project in a Unity Editor with the `com.unity.pipeline` package, or run `unity pipeline install`. Batch Editors don't appear in `status` — use `unity command`/`unity list` to confirm reachability. |
+| Live control (`unity_eval`) fails | The project's Pipeline package isn't loaded. If the Editor is in Safe Mode (compile errors), fix the errors first — see the `unity-cli` skill's Safe-Mode notes. |
+| `unity_build`/`unity_test` fail | These spawn a headless Editor — ensure the target/editor version in `ProjectSettings/ProjectVersion.txt` is installed via `unity editors`. |
 | Windows symlink fails | Enable Developer Mode, or copy the folder instead of linking. |
 
 ## Updating

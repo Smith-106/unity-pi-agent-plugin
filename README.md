@@ -5,9 +5,9 @@
 It combines:
 
 - **31 official Unity skills** — curated by Unity Technologies (IAP, LevelPlay ads, URP/Render Graph, Tilemap, UI Toolkit, TextMeshPro, multiplayer, localization, audio, and more). These are standard [Agent Skills](https://agentskills.io/specification) that pi loads natively.
-- **A pi extension** — live tools that inspect your project and drive the Unity editor (`unity_detect_editors`, `unity_project_info`, `unity_run_batch`) plus a `/unity:status` command.
+- **A pi extension** — a thin bridge over the official `unity` CLI, exposing it as pi tools (`unity_status`, `unity_command`, `unity_eval`, `unity_build`, `unity_test`) plus a `/unity:status` command. Same capability source as the official Claude/Codex plugin, with pi's TUI widgets on top.
 
-> Compatible with **Unity 6+** (`6000.x`). Works wherever pi runs (Windows / macOS / Linux).
+> Compatible with **Unity 6+** (`6000.x`) and the **`unity` CLI (beta)**. Works wherever pi runs (Windows / macOS / Linux).
 
 ---
 
@@ -30,7 +30,21 @@ unity-pi-agent-plugin/
 
 ## Install
 
-### 1. Skills (the Unity knowledge)
+### 1. Install the `unity` CLI
+
+The extension drives the official `unity` binary — same as the upstream plugin. Install it once (beta channel):
+
+```bash
+# macOS / Linux
+curl -fsSL https://public-cdn.cloud.unity3d.com/hub/prod/cli/install.sh | UNITY_CLI_CHANNEL=beta bash
+
+# Windows (PowerShell)
+$env:UNITY_CLI_CHANNEL='beta'; irm https://public-cdn.cloud.unity3d.com/hub/prod/cli/install.ps1 | iex
+```
+
+Verify with `unity --version`.
+
+### 2. Skills (the Unity knowledge)
 
 Point pi at this repo's `skills/` directory. In `~/.pi/settings.json` (global) or `<project>/.pi/settings.json` (project-only):
 
@@ -42,7 +56,7 @@ Point pi at this repo's `skills/` directory. In `~/.pi/settings.json` (global) o
 
 pi recursively discovers every `SKILL.md` under that path. Restart pi and the 31 Unity skills appear — ask for a task in natural language, or force one with `/skill:<name>`.
 
-### 2. Extension (the Unity tools)
+### 3. Extension (the Unity tools)
 
 Link the extension into pi's global extensions dir:
 
@@ -66,19 +80,20 @@ Once installed:
 
 - **Automatic skills** — "add in-app purchases", "create a hex tile palette", "my pixel art jitters", "review my ScriptableRendererFeature" — pi picks the matching skill.
 - **`/unity:status`** — shows detected project root, Unity version, scene/script/package counts, and installed editors in the TUI.
-- **Tools** — the model can call:
-  - `unity_project_info` — read editor version, manifest deps, asmdefs, scene/script counts.
-  - `unity_detect_editors` — list installed Unity editors and their executables.
-  - `unity_run_batch` — run Unity `-batchmode -quit` (e.g. `-executeMethod`, `-runTests`); asks you to confirm first.
+- **Tools** — the model can call these (all drive the real `unity` CLI):
+  - `unity_status` — live Editor instances (port, project, version, PID, state).
+  - `unity_command` — run a Pipeline command on a live Editor (`unity command <name>`); omit name to list commands.
+  - `unity_eval` — eval C# in a live Editor (`unity command eval`); confirms first.
+  - `unity_build` — headless build via `unity build` (`--target`/`--profile`/`--execute-method`); confirms first.
+  - `unity_test` — EditMode/PlayMode tests via `unity test`; confirms first.
 
 ## Example
 
 ```
 > /unity:status
-Unity 6000.3.24f1 · 1 scenes · 24 scripts
-root: D:\games\MyGame
-packages: 18 · asmdefs: 3
-editors installed: 6000.3.24f1
+CLI: unity found
+project: D:\games\MyGame (Unity 6000.3.24f1)
+live editors: MyGame v6000.3.24f1 :38412 [ready]
 
 > add rewarded ads so players can earn coins
 (pi loads the levelplay-unity-integration skill and guides the integration)
