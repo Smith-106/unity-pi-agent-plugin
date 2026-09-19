@@ -1,0 +1,14 @@
+# Local dev symlinks to pi's bundled deps — not for publication
+node_modules/
+.smoke.cjs
+
+# Unity-generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+pi-batch.log
+
+# OS
+.DS_Store
+Thumbs.db
