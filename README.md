@@ -1,3 +1,11 @@
+> ⚠️ **ARCHIVED / SUPERSEDED** — this repo is fully covered by **[Smith-106/pi-unity](https://github.com/Smith-106/pi-unity)**, which bundles pi-unity's execution engine (12 tools, `/unity-open`, `/unity-playmode-exit`) **plus** these 31 official skills **plus** the ported `/unity:status` and `/unity:mcp` commands:
+>
+> ```bash
+> pi install git:github.com/Smith-106/pi-unity
+> ```
+>
+> This repo stays as a read-only reference; no further development happens here.
+
 # unity-pi-agent-plugin
 
 **Unity 6 game development plugin for [pi](https://github.com/earendil-works/pi-coding-agent)** — brings Unity's official agent skills plus pi-native editor tools into your pi sessions.
